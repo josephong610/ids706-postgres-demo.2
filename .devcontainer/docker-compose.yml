@@ -1,0 +1,25 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/python:3.11
+    volumes:
+      - ..:/workspaces:cached
+    depends_on:
+      - db
+    command: sleep infinity
+
+  db:
+    image: postgres:16
+    env_file: .env
+    ports:
+      - "55432:5432" 
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ../init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+
+volumes:
+  pg_data:

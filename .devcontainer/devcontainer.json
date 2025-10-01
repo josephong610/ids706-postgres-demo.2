@@ -1,0 +1,15 @@
+{
+  "name": "IDS706 Postgres Dev",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+  "forwardPorts": [5432],
+  "postCreateCommand": "sudo apt-get update && sudo apt-get install -y postgresql-client && pip install -r requirements.txt",
+  "remoteEnv": {
+    "PGHOST": "db",
+    "PGUSER": "vscode",
+    "PGPASSWORD": "vscode",
+    "PGDATABASE": "duke_restaurants",
+    "PGPORT": "5432"
+  }
+}
