@@ -19,6 +19,7 @@ def main():
     )
     cur = conn.cursor()
 
+    # --- Existing queries ---
     print("\nTop rated places:")
     cur.execute("""
         SELECT name, rating
@@ -56,6 +57,67 @@ def main():
         RETURNING id, name, rating;
     """)
     print("Deleted:", cur.fetchone())
+
+    # --- Added queries ---
+    print("\n5 Cheapest Restaurants:")
+    cur.execute("""
+        SELECT name, cuisine, avg_cost
+        FROM restaurants
+        ORDER BY avg_cost ASC
+        LIMIT 5;
+    """)
+    for row in cur.fetchall():
+        print(row)
+
+    print("\nNearby highly rated (within 5 miles, rating >= 4.0):")
+    cur.execute("""
+        SELECT name, cuisine, distance_miles, rating
+        FROM restaurants
+        WHERE distance_miles <= 5 AND rating >= 4.0
+        ORDER BY rating DESC, distance_miles ASC;
+    """)
+    for row in cur.fetchall():
+        print(row)
+
+    print("\nRestaurants within 2 miles:")
+    cur.execute("""
+        SELECT name, distance_miles
+        FROM restaurants
+        WHERE distance_miles <= 2.0
+        ORDER BY distance_miles ASC;
+    """)
+    for row in cur.fetchall():
+        print(row)
+
+    print("\nTop 3 Restaurants by Rating:")
+    cur.execute("""
+        SELECT name, rating
+        FROM restaurants
+        ORDER BY rating DESC
+        LIMIT 3;
+    """)
+    for row in cur.fetchall():
+        print(row)
+
+    print("\nRestaurants with avg_cost and cost_with_tax:")
+    cur.execute("""
+        SELECT name, avg_cost, avg_cost * 1.075 AS cost_with_tax
+        FROM restaurants;
+    """)
+    for row in cur.fetchall():
+        print(row)
+
+    print("\nNumber of restaurants per cuisine:")
+    cur.execute("""
+        SELECT cuisine, COUNT(*) AS num_restaurants
+        FROM restaurants
+        GROUP BY cuisine
+        ORDER BY num_restaurants DESC;
+    """)
+    for row in cur.fetchall():
+        print(row)
+
+    # --- End of queries ---
 
     conn.commit()
     cur.close()
